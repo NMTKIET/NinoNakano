@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Generator</title>
+    <meta content="NMTKIET" property="og:title"/>
+    <meta content="Xây dựng và phát triển bởi NMTKIET !" property="og:description"/>
+    
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500,700&subset=latin-ext");
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Background từ ảnh bạn cung cấp (cô gái nhìn thành phố) */
+            background-image: url('background_city_night.jpg'); /* Đảm bảo tên file chính xác và ảnh trong cùng thư mục */
+            background-size: cover; /* Bao phủ toàn bộ màn hình */
+            background-position: center bottom; /* Căn giữa theo chiều ngang, đặt ở dưới theo chiều dọc */
+            background-repeat: no-repeat; /* Không lặp lại ảnh */
+            background-attachment: fixed; /* Giữ ảnh cố định khi cuộn */
+            background-color: #1a1a38; /* Màu nền dự phòng: Một màu xanh tím sẫm từ bầu trời trong ảnh */
+
+            color: #fff; /* Màu chữ mặc định là trắng */
+            overflow: hidden; /* Ẩn thanh cuộn mặc định, chỉ dùng thanh cuộn tùy chỉnh */
+        }
+
+        /* Thanh cuộn tùy chỉnh */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 50px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 50px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .card {
+            background-color: rgba(20, 20, 40, 0.85); /* Nền card tối hơn, tông xanh tím sẫm, hơi trong suốt */
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); /* Đổ bóng mạnh */
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            backdrop-filter: blur(8px); /* Làm mờ background đằng sau card */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Thêm viền mỏng để card nổi bật */
+        }
+
+        .card-title {
+            color: #ffd700; /* Màu vàng Gold cho tiêu đề, khớp với ánh sáng mặt trời */
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 15px;
+            background-color: #33334d; /* Nền của thanh tiến trình: một màu xanh tím tối */
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px; /* Khoảng cách dưới thanh tiến trình */
+        }
+
+        .progress-bar-fill {
+            width: 0%; /* Bắt đầu từ 0% */
+            height: 100%;
+            background: linear-gradient(to right, #ff8c00, #4169e1); /* Gradient từ cam đậm sang xanh royal blue */
+            border-radius: 10px;
+            transition: width 0.1s linear; /* Chuyển động mượt mà cho thanh tiến trình */
+        }
+
+        .progress-percentage {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #f0e68c; /* Màu vàng Khaki cho phần trăm */
+            margin-bottom: 30px; /* Khoảng cách dưới phần trăm */
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: #fff; /* Chữ trắng trên nút */
+        }
+
+        .btn-pink { /* Vẫn giữ tên class là btn-pink nhưng đổi màu cho khớp tông mới */
+            background-color: #4169e1; /* Màu xanh royal blue, nổi bật */
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.5); /* Đổ bóng xanh */
+        }
+
+        .btn-pink:hover {
+            background-color: #3658be; /* Xanh đậm hơn khi hover */
+            transform: translateY(-2px);
+        }
+
+        .generated-key {
+            color: #f0e68c; /* Màu vàng Khaki cho key, dễ đọc trên nền tối */
+            font-size: 1.3em;
+            font-weight: bold;
+            word-break: break-all;
+            margin-bottom: 20px;
+            display: block;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.4); /* Nền hơi tối cho key để tăng độ tương phản */
+            border-radius: 5px;
+        }
+
+        /* Hiệu ứng mưa rơi */
+        .rain {
+            position: fixed; /* Đảm bảo mưa luôn hiển thị trên toàn bộ khung nhìn */
+            width: 1px;
+            height: 30px; /* Chiều dài hạt mưa */
+            /* Thay đổi màu mưa để phù hợp với bầu trời đêm/hoàng hôn */
+            background: linear-gradient(to bottom, rgba(173, 216, 230, 0), rgba(120, 160, 200, 0.8)); /* Từ trong suốt sang xanh xám đậm hơn */
+            opacity: 0;
+            animation: rain-fall 1s linear infinite;
+            z-index: 0; /* Đảm bảo mưa nằm dưới các phần tử nội dung */
+            pointer-events: none; /* Đảm bảo mưa không cản trở tương tác */
+        }
+
+        @keyframes rain-fall {
+            0% {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh); /* Rơi xuống hết màn hình */
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1 class="card-title" id="cardTitle">Đang tạo key...</h1>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <p class="progress-percentage" id="progressPercentage">0%</p>
+            
+            <div id="keyContent" style="display: none;">
+                <button class="btn btn-pink" id="copyKeyBtnFinal">Sao chép Key</button>
+            </div>
+            
+            <button class="btn btn-pink" id="copyKeyBtnInitial">Sao chép Key</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
